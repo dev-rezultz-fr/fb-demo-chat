@@ -1,62 +1,150 @@
 <head>
   <meta charset="utf-8" />
-  <title>Firebase Meetup</title>
-  <link
-    type="text/css"
-    rel="stylesheet"
-    href="https://cdn.firebase.com/libs/firebaseui/4.0.0/firebaseui.css"
-  />
-  <link
-    href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:300,400,700&display=swap"
-    rel="stylesheet"
-  />
-  <link
-    href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    rel="stylesheet"
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="description"
+    content="Learn how to use the Firebase platform on the Web"
   />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Friendly Chat</title>
+
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no" />
+
+  <!-- Web Application Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="Friendly Chat" />
+  <meta name="theme-color" content="#303F9F" />
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  />
+  <meta name="apple-mobile-web-app-title" content="Friendly Chat" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F" />
+
+  <!-- Tile icon for Win8 -->
+  <meta name="msapplication-TileColor" content="#3372DF" />
+  <meta name="msapplication-navbutton-color" content="#303F9F" />
+
+  <!-- Material Design Lite -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  />
+  <link
+    rel="stylesheet"
+    href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css"
+  />
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+  <!-- App Styling -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en"
+  />
+  <link rel="stylesheet" href="styles/main.css" />
+
+  <!-- TODO: Enable First Input Delay polyfill library. -->
+  <!--  <script type="text/javascript">!function(n,e){var t,o,i,c=[],f={passive:!0,capture:!0},r=new Date,a="pointerup",u="pointercancel";function p(n,c){t||(t=c,o=n,i=new Date,w(e),s())}function s(){o>=0&&o<i-r&&(c.forEach(function(n){n(o,t)}),c=[])}function l(t){if(t.cancelable){var o=(t.timeStamp>1e12?new Date:performance.now())-t.timeStamp;"pointerdown"==t.type?function(t,o){function i(){p(t,o),r()}function c(){r()}function r(){e(a,i,f),e(u,c,f)}n(a,i,f),n(u,c,f)}(o,t):p(o,t)}}function w(n){["click","mousedown","keydown","touchstart","pointerdown"].forEach(function(e){n(e,l,f)})}w(n),self.perfMetrics=self.perfMetrics||{},self.perfMetrics.onFirstInputDelay=function(n){c.push(n),s()}}(addEventListener,removeEventListener);</script> -->
 </head>
-
 <body>
-  <div id="app">
-    <img
-      src="https://firebasestorage.googleapis.com/v0/b/fir-images-a61c9.appspot.com/o/codelab.png?alt=media&token=f45f808c-ce40-4b34-944c-8d8fac00e13d"
-    />
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <!-- Header section containing logo -->
+    <header
+      class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700"
+    >
+      <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+        <div
+          class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop"
+        >
+          <h3>
+            <i class="material-icons">chat_bubble_outline</i> Friendly Chat
+          </h3>
+        </div>
+        <div id="user-container">
+          <div hidden id="user-pic"></div>
+          <div hidden id="user-name"></div>
+          <button
+            hidden
+            id="sign-out"
+            class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white"
+          >
+            Sign-out
+          </button>
+          <button
+            id="sign-in"
+            class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white"
+          >
+            <i class="material-icons">account_circle</i>Sign-in with Google
+          </button>
+        </div>
+      </div>
+    </header>
 
-    <section id="event-details-container">
-      <h1>Firebase Meetup</h1>
+    <main class="mdl-layout__content mdl-color--grey-100">
+      <div
+        id="messages-card-container"
+        class="mdl-cell mdl-cell--12-col mdl-grid"
+      >
+        <!-- Messages container -->
+        <div
+          id="messages-card"
+          class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop"
+        >
+          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+            <div id="messages"></div>
+            <form id="message-form" action="#">
+              <div
+                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+              >
+                <input
+                  class="mdl-textfield__input"
+                  type="text"
+                  id="message"
+                  autocomplete="off"
+                />
+                <label class="mdl-textfield__label" for="message"
+                  >Message...</label
+                >
+              </div>
+              <button
+                id="submit"
+                disabled
+                type="submit"
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+              >
+                Send
+              </button>
+            </form>
+            <form id="image-form" action="#">
+              <input
+                id="mediaCapture"
+                type="file"
+                accept="image/*"
+                capture="camera"
+              />
+              <button
+                id="submitImage"
+                title="Add an image"
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400 mdl-color-text--white"
+              >
+                <i class="material-icons">image</i>
+              </button>
+            </form>
+          </div>
+        </div>
 
-      <p><i class="material-icons">calendar_today</i> October 30</p>
-      <p><i class="material-icons">location_city</i> San Francisco</p>
-      <button id="startRsvp">RSVP</button>
-    </section>
-
-    <hr />
-
-    <section id="firebaseui-auth-container"></section>
-
-    <section id="description-container">
-      <h2>What we'll be doing</h2>
-      <p>Join us for a day full of Firebase Workshops and Pizza!</p>
-      <p id="number-attending"></p>
-    </section>
-
-    <section id="guestbook-container">
-      <h2>Are you attending?</h2>
-      <button id="rsvp-yes">YES</button>
-      <button id="rsvp-no">NO</button>
-
-      <h2>Discussion</h2>
-
-      <form id="leave-message">
-        <label>Leave a message: </label>
-        <input type="text" id="message" />
-        <button type="submit">
-          <i class="material-icons">send</i>
-          <span>SEND</span>
-        </button>
-      </form>
-      <section id="guestbook"></section>
-    </section>
+        <div id="must-signin-snackbar" class="mdl-js-snackbar mdl-snackbar">
+          <div class="mdl-snackbar__text"></div>
+          <button class="mdl-snackbar__action" type="button"></button>
+        </div>
+      </div>
+    </main>
   </div>
 </body>
